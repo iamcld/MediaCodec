@@ -41,6 +41,18 @@ public class CameraH264Encod {
 
     }
 
+    /**
+     * 1.数据生成方（左侧Client）从input缓冲队列申请empty buffer—》dequeueinputBuffer
+     * 2.数据生产方（左侧Client）把需要编解码的数据copy到empty buffer，然后放入到input缓冲队列 —》queueInputBuffer
+     * 3.MediaCodec从input缓冲区队列中取一帧进行编解码处理
+     * 4.编解码处理结束后，MediaCodec将原始inputbuffer置为empty后放回左侧的input缓冲队列，将编解码后的数据放入到右侧output缓冲区队列
+     * 5.消费方Client（右侧Client）从output缓冲区队列申请编解码后的buffer —》dequeueOutputBuffer
+     * 6.消费方client（右侧Client）对编解码后的buffer进行渲染或者播放
+     * 7.渲染/播放完成后，消费方Client再将该buffer放回到output缓冲区队列 —》releaseOutputBuffer
+     * @param input
+     * @return
+     */
+
     // 数据流：摄像头-》CPU-》给到dsp进行编码-》编码后的数据重新给到cpu
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public int encodeFrame(byte[] input) {
